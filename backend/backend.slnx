@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/BogdaoTech.API/BogdaoTech.API.csproj" Id="c894bb8a-8a10-484c-9a98-ea554b78fa01" />
+  <Project Path="src/BogdaoTech.Application/BogdaoTech.Application.csproj" Id="a0cd1d45-7b6c-4078-87c3-37c71b886afb" />
+  <Project Path="src/BogdaoTech.Domain/BogdaoTech.Domain.csproj" Id="686b3d9e-373f-454e-b7d9-0c0852b1ecb2" />
+  <Project Path="src/BogdaoTech.Infrastructure/BogdaoTech.Infrastructure.csproj" Id="731e597e-ba9b-4ebc-9508-13cd245fe662" />
+</Solution>
