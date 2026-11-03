@@ -11,11 +11,11 @@ public record File
 
     public static Result<File> Create(string pathToStorage)
     {
-        if(string.IsNullOrEmpty(pathToStorage))
+        if(string.IsNullOrWhiteSpace(pathToStorage))
         {
             return "PathToStorage cannot be empty";
         }
 
-        return new File(pathToStorage);
+        return pathToStorage;
     }
 }
