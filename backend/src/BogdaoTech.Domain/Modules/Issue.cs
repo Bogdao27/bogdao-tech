@@ -1,10 +1,14 @@
-﻿using System.Net;
+﻿using BogdaoTech.Domain.Shared;
+using System.Net;
 
-public class Issue //Задачи в модуле
+public class Issue : Entity<IssueId>//Задачи в модуле
 {
-    public Guid Id { get; set; } //Айдишник задачи в базе данных
+    //Ef core
+    private Issue(IssueId id) : base(id)
+    {
+    }
 
-    public Guid LessonId { get; set; } //Айдишник урока
+    public Guid? LessonId { get; set; } //Айдишник урока
 
     public string Title { get; set; } = default!; //Название задачи
 
@@ -14,5 +18,5 @@ public class Issue //Задачи в модуле
 
     public List<Issue> SubIssues { get; set; } = []; //Подзадачи
 
-    public List<File> Files { get; set; } = []; //У задач есть много файлов
+    public IssueDetails? Details { get; private set; } //У задач есть много файлов
 }
