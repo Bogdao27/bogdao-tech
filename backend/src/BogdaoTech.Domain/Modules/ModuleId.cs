@@ -18,5 +18,18 @@
         //метод, который позволит перенести вот эту сущность в БД
         //в качестве Id
         public static ModuleId Create(Guid id) => new(id);
+
+        public static implicit operator ModuleId(Guid id) => new(id);
+        
+        //для БД конекста
+        public static implicit operator Guid(ModuleId moduleId)
+        {
+            if (moduleId is null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return moduleId.Value;
+        }
     }
 }

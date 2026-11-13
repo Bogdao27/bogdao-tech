@@ -1,10 +1,6 @@
-﻿using BogdaoTech.Domain.Modules;
-using BogdaoTech.Domain.Shared;
+﻿using BogdaoTech.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BogdaoTech.Infrastructure.Configuration
 {
@@ -26,18 +22,28 @@ namespace BogdaoTech.Infrastructure.Configuration
                      value => IssueId.Create(value)
                 );
 
-            builder.Property(i => i.LessonId)
-                .IsRequired(false);
+            builder.ComplexProperty(i => i.LessonId, lb =>
+            {
+                lb.Property(l => l.Value)
+                .IsRequired(false)
+                .HasColumnName("lesson_id");
+            });
 
-            //настройка свойства заголовок у модели модуля
-            builder.Property(i => i.Title)
-                .IsRequired()
-                .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
+            builder.ComplexProperty(i => i.Title, tb =>
+            {
+                tb.Property(t => t.Value)
+                     .IsRequired()
+                     .HasMaxLength(Title.MAX_LENGTH)
+                     .HasColumnName("title");
+            });
 
-            //настройка свойства описание у модели модуля
-            builder.Property(i => i.Description)
-                .IsRequired()
-                .HasMaxLength(Constants.MAX_HIGH_TEXT_LENGTH);
+            builder.ComplexProperty(i => i.Description, db =>
+            {
+                db.Property(d => d.Value)
+                     .IsRequired()
+                     .HasMaxLength(Description.MAX_LENGTH)
+                     .HasColumnName("description");
+            });
 
             //У задачи есть связь родительская, а у родительской есть много дочерних задач
             //и они необязательные и при удалении не затрагиваем дочерние подзадачи
@@ -50,7 +56,7 @@ namespace BogdaoTech.Infrastructure.Configuration
             //конфигурируем Json-файлы
             builder.OwnsOne(i => i.Details, ib =>
             {
-                ib.ToJson();
+                ib.ToJson("files");
 
                 ib.OwnsMany(d => d.Files, fb =>
                 {
@@ -59,6 +65,10 @@ namespace BogdaoTech.Infrastructure.Configuration
                         .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
                 });
             });
+
+            builder.Property<bool>("_isDeleted")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("is_deleted");
         }
     }
 }

@@ -16,8 +16,8 @@ namespace BogdaoTech.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false)
+                    description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
+                    title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,11 +29,11 @@ namespace BogdaoTech.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    lesson_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
                     parent_issue_id = table.Column<Guid>(type: "uuid", nullable: true),
                     module_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
+                    lesson_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     details = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
