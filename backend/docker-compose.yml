@@ -15,6 +15,22 @@ services:
     volumes:
       - postgres18-data:/var/lib/postgresql
 
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    restart: always
+    environment:
+     - ACCEPT_EULA=Y
+     - SEQ_FIRSTRUN_ADMINPASSWORD
+    ports:
+     - 5341:5341
+     - 8081:80
+  
+  bogdaotech.api:
+    build:
+      context: .
+      dockerfile: src/BogdaoTech.API/Dockerfile
+
 volumes:
   postgres18-data: 
   

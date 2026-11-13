@@ -31,20 +31,31 @@ namespace BogdaoTech.Infrastructure.Configuration
                      value => ModuleId.Create(value)
                 );
 
-            //настройка свойства заголовок у модели модуля
-            builder.Property(m => m.Title)
-                .IsRequired()
-                .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
+            builder.ComplexProperty(m => m.Title, tb =>
+            {
+                tb.Property(t => t.Value)
+                    .IsRequired()
+                    .HasMaxLength(Title.MAX_LENGTH)
+                    .HasColumnName("title");
+            });
 
-            //настройка свойства описание у модели модуля
-            builder.Property(m => m.Description)
-                .IsRequired()
-                .HasMaxLength(Constants.MAX_HIGH_TEXT_LENGTH);
+            builder.ComplexProperty(m => m.Description, db =>
+            {
+                db.Property(d => d.Value)
+                    .IsRequired()
+                    .HasMaxLength(Description.MAX_LENGTH)
+                    .HasColumnName("description");
+            });
 
             //У модуля есть много задач, а у каждого задания есть один модуль
             builder.HasMany(m => m.Issues)
                 .WithOne()
-                .HasForeignKey("module_id");
+                .HasForeignKey("module_id")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Property<bool>("_isDeleted")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("is_deleted");
         }
     }
 }

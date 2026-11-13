@@ -1,11 +1,12 @@
-﻿using System.Net;
-using BogdaoTech.Domain.Shared;
+﻿using BogdaoTech.Domain.Shared;
+using CSharpFunctionalExtensions;
 
 namespace BogdaoTech.Domain.Modules
 {
-    
-    public sealed class Module : Shared.Entity<ModuleId>
+    public sealed class Module : Shared.Entity<ModuleId>, ISoftDeletable
     {
+        private bool _isDeleted = false;
+        
         private readonly List<Issue> _issues = [];
         
         //Ef Core
@@ -13,37 +14,49 @@ namespace BogdaoTech.Domain.Modules
         {
         }
 
-        private Module(ModuleId moduleId, string title, string description)
+        public Module(ModuleId moduleId, Title title, Description description)
             : base(moduleId)
         {
             Title = title;
             Description = description;
         }
                 
-        public string Title { get; private set; } = default!; //Название сущности
+        public Title Title { get; private set; } = default!; //Название сущности
 
-        public string Description { get; private set; } = default!; //Описание сущности
+        public Description Description { get; private set; } = default!; //Описание сущности
 
         public IReadOnlyList<Issue> Issues => _issues; //Коллекция сущностей Issue в модуле
 
         public int GetNumberOfIssues() => _issues.Count(); //Возвращает количество задач
 
-        //Мы возвращаем модуль если все ок, а если не ок, то возвращаем исключение
-        public static Result<Module> Create(ModuleId moduleId, string title, string description)
+        public void UpdateMainInfo(Title title, Description description)
         {
-            if (string.IsNullOrWhiteSpace(title))
+            Title = title;
+            Description = description;
+        }
+
+        public void Delete()
+        {
+            if(_isDeleted == false)
             {
-                return "Title can not be empty";
+                _isDeleted = true;
             }
+        }
 
-            if (string.IsNullOrWhiteSpace(description))
+        public void Restore()
+        {
+            if (_isDeleted)
             {
-                return "Description can not be empty";
+                _isDeleted = false;
             }
+        }
 
-            var module = new Module(moduleId, title, description);
+        public UnitResult<Error> AddIssue(Issue issue)
+        {
+            //валидация
+            _issues.Add(issue);
 
-            return module;
+            return Result.Success<Error>();
         }
     }
 }

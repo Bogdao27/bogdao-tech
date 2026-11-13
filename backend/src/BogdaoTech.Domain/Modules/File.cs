@@ -1,4 +1,5 @@
 ﻿using BogdaoTech.Domain.Shared;
+using CSharpFunctionalExtensions;
 
 public record File
 {
@@ -9,13 +10,13 @@ public record File
     
     public string PathToStorage { get; } //Путь к файлу, не храним его в базе
 
-    public static Result<File> Create(string pathToStorage)
+    public static Result<File, Error> Create(string pathToStorage)
     {
         if(string.IsNullOrWhiteSpace(pathToStorage))
         {
-            return "PathToStorage cannot be empty";
+            return Errors.General.ValueIsInvalid("pathToStorage");
         }
 
-        return pathToStorage;
+        return new File(pathToStorage);
     }
 }
