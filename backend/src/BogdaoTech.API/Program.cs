@@ -28,7 +28,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSerilog();
 builder.Services
-    .AddInfrastructure()
+    .AddInfrastructure(builder.Configuration)
     .AddApplication();
 builder.Services.AddFluentValidationAutoValidation(configuration =>
 {
