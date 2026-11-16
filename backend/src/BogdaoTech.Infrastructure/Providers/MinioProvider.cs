@@ -1,43 +1,58 @@
 using System;
+using BogdaoTech.Application.FileProvider;
+using BogdaoTech.Application.Providers;
+using BogdaoTech.Domain.Shared;
 using BogdaoTech.Infrastructure.Models;
+using CSharpFunctionalExtensions;
+using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel.Args;
 
 namespace BogdaoTech.Infrastructure.Providers;
 
-public class MinioProvider
+public class MinioProvider : IFileProvider
 {
     private readonly MinioClient _minioClient;
+    private readonly ILogger<MinioProvider> _logger;
 
-    public MinioProvider(MinioClient minioClient)
+    public MinioProvider(MinioClient minioClient, ILogger<MinioProvider> logger)
     {
         _minioClient = minioClient;
+        _logger = logger;
     }
 
-    public async Task<string> UploadFile(
+    public async Task<Result<string, Error>> UploadFile(
         FileData fileData, 
         CancellationToken cancellationToken = default)
     {
-        var bucketExistArgs = new BucketExistsArgs().WithBucket("photos");
-
-        var bucketExist = await _minioClient.BucketExistsAsync(bucketExistArgs, cancellationToken);
-        if (bucketExist == false)
+        try
         {
-            var makeBucketArgs = new MakeBucketArgs().WithBucket("photos");
+            var bucketExistArgs = new BucketExistsArgs().WithBucket("photos");
 
-            await _minioClient.MakeBucketAsync(makeBucketArgs, cancellationToken);
+            var bucketExist = await _minioClient.BucketExistsAsync(bucketExistArgs, cancellationToken);
+            if (bucketExist == false)
+            {
+                var makeBucketArgs = new MakeBucketArgs().WithBucket("photos");
+
+                await _minioClient.MakeBucketAsync(makeBucketArgs, cancellationToken);
+            }
+
+            var path = Guid.NewGuid();
+
+            var putObjectArgs = new PutObjectArgs()
+                .WithBucket("photos")
+                .WithStreamData(fileData.Stream)
+                .WithObjectSize(fileData.Stream.Length)
+                .WithObject(path.ToString());
+
+            var result = await _minioClient.PutObjectAsync(putObjectArgs, cancellationToken);
+
+            return result.ObjectName;
         }
-
-        var path = Guid.NewGuid();
-
-        var putObjectArgs = new PutObjectArgs()
-            .WithBucket("photos")
-            .WithStreamData(fileData.Stream)
-            .WithObjectSize(fileData.Stream.Length)
-            .WithObject(path.ToString());
-        
-        var result = await _minioClient.PutObjectAsync(putObjectArgs, cancellationToken);
-
-        return result.ObjectName;
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Fail to upload file in minio");
+            return Error.Failure("file.upload", "Fail to upload file in minio");
+        }
     }
 }
