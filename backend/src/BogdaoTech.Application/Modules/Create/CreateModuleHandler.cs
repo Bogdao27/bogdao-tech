@@ -11,8 +11,6 @@ namespace BogdaoTech.Application.Modules.CreateModules
     //свой класс. одна фича - один класс
     public class CreateModuleHandler
     {
-        //не имеем прямого доступа к инфраструктуре, но взаимодействуем с ней
-        //через интерфейс, реализация которого находится в репозитории
         private readonly IModulesRepository _modulesRepository;
         private readonly ILogger<CreateModuleHandler> _logger;
 
@@ -23,8 +21,6 @@ namespace BogdaoTech.Application.Modules.CreateModules
             _modulesRepository = modulesRepository;
             _logger = logger;
         }
-
-        //обработать бизнес операцию. удобно возвращать гуид для фронта
         public async Task<Result<Guid, Error>> HandlerAsync(
             CreateModuleRequest request, 
             CancellationToken cancellationToken = default)

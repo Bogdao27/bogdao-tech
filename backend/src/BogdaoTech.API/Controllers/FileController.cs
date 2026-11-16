@@ -13,8 +13,7 @@ public class FileController : ApplicationController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateFile()
+    public async Task<IActionResult> CreateFile(IFormFile file, CancellationToken cancellationToken)
     {
-        
     }
 }
