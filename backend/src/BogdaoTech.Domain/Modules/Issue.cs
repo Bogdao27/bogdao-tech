@@ -13,13 +13,13 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
     {
     }
     
-    private Issue (
+    public Issue (
         IssueId id,
         LessonId lessonId,
         Title title,
         Description description,
         Issue? parentIssue,
-        IssueDetails? details) : base(id)
+        FilesList? details) : base(id)
     {
         LessonId = lessonId;
         Title = title;
@@ -32,17 +32,6 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
     {
         //logic and validation
         _subIssues.Add(issue);
-    }
-
-    public static Result<Issue> Create(
-        IssueId id,
-        LessonId lessonId,
-        Title title,
-        Description description,
-        Issue? parentIssue,
-        IssueDetails? details)
-    {
-        return new Issue(id, lessonId, title, description, parentIssue, details);
     }
 
     public void Delete()
@@ -71,5 +60,5 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
 
     public IReadOnlyList<Issue> SubIssues => _subIssues; //Подзадачи
 
-    public IssueDetails? Details { get; private set; } //У задач есть много файлов
+    public FilesList? Details { get; private set; } //У задач есть много файлов
 }

@@ -61,6 +61,9 @@ namespace BogdaoTech.Infrastructure.Configuration
                 ib.OwnsMany(d => d.Files, fb =>
                 {
                     fb.Property(f => f.PathToStorage)
+                        .HasConversion(
+                            p => p.Path,
+                            value => FilePath.Create(value).Value)
                         .IsRequired()
                         .HasMaxLength(Constants.MAX_LOW_TEXT_LENGTH);
                 });

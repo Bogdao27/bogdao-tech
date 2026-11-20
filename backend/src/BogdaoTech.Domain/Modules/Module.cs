@@ -53,7 +53,7 @@ namespace BogdaoTech.Domain.Modules
 
         public UnitResult<Error> AddIssue(Issue issue)
         {
-            //валидация
+            //валидация + логика
             _issues.Add(issue);
 
             return Result.Success<Error>();

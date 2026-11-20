@@ -1,5 +1,7 @@
+using BogdaoTech.API.Contracts;
 using BogdaoTech.API.Extensions;
 using BogdaoTech.API.Response;
+using BogdaoTech.Application.Modules.AddIssue;
 using BogdaoTech.Application.Modules.CreateModules;
 using BogdaoTech.Application.Modules.Delete;
 using BogdaoTech.Application.Modules.UpdateMainInfo;
@@ -78,6 +80,48 @@ namespace BogdaoTech.API.Controllers
             }
 
             return Ok(result.Value);
+        }
+
+        [HttpPost("{id:guid}/issue")]
+        public async Task<IActionResult> AddIssue(
+            [FromRoute] Guid id,
+            [FromForm] AddIssueRequest request,
+            [FromServices] AddIssueHandler handler,
+            CancellationToken cancellationToken
+        )
+        {
+            List<FileDto> filesDto = [];
+            
+            try
+            {
+                foreach (var file in request.Files)
+                {
+                    var stream = file.OpenReadStream();
+                    filesDto.Add(new FileDto(stream, file.FileName, file.ContentType));
+                }
+
+                var command = new AddIssueCommand(
+                    id,
+                    request.Title,
+                    request.Description,
+                    filesDto
+                );
+                
+                var result = await handler.HandlerAsync(command, cancellationToken);
+                if (result.IsFailure)
+                {
+                    return result.Error.ToResponse();
+                }
+                
+                return Ok(result.Value);
+            }
+            finally
+            {
+                foreach (var fileDto in filesDto)
+                {
+                    await fileDto.Content.DisposeAsync();
+                }
+            }
         }
     }
 }

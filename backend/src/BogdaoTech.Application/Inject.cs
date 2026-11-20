@@ -1,4 +1,5 @@
-﻿using BogdaoTech.Application.Modules.CreateModules;
+﻿using BogdaoTech.Application.Modules.AddIssue;
+using BogdaoTech.Application.Modules.CreateModules;
 using BogdaoTech.Application.Modules.Delete;
 using BogdaoTech.Application.Modules.UpdateMainInfo;
 using FluentValidation;
@@ -15,6 +16,8 @@ namespace BogdaoTech.Application
             services.AddScoped<UpdateMainInfoHandler>();
             
             services.AddScoped<DeleteModuleHandler>();
+
+            services.AddScoped<AddIssueHandler>();
 
             services.AddValidatorsFromAssembly(typeof(Inject).Assembly);
 
