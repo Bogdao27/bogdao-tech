@@ -4,5 +4,5 @@ using System.Text;
 
 namespace BogdaoTech.Application.FileProvider
 {
-    public record FileData(Stream Stream, string BucketName, string ObjectName);
+    public record FileData(Stream Stream, FilePath FilePath, string BucketName);
 }

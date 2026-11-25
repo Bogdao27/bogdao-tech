@@ -65,24 +65,20 @@ namespace BogdaoTech.Infrastructure.Repositories
             return module;
         }
 
-        public async Task<Guid> Save(
+        public Guid Save(
             Module module, 
             CancellationToken cancellationToken = default)
         {
             _dbContext.Modules.Attach(module);
             
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
             return module.Id;
         }
 
-        public async Task<Guid> Delete(
+        public Guid Delete(
             Module module, 
             CancellationToken cancellationToken = default)
         {
             _dbContext.Remove(module);
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return module.Id;
         }

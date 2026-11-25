@@ -21,13 +21,13 @@ namespace BogdaoTech.Domain.Modules
             Description = description;
         }
                 
-        public Title Title { get; private set; } = default!; //Название сущности
+        public Title Title { get; private set; } = default!;
 
-        public Description Description { get; private set; } = default!; //Описание сущности
+        public Description Description { get; private set; } = default!;
 
-        public IReadOnlyList<Issue> Issues => _issues; //Коллекция сущностей Issue в модуле
+        public IReadOnlyList<Issue> Issues => _issues;
 
-        public int GetNumberOfIssues() => _issues.Count(); //Возвращает количество задач
+        public int GetNumberOfIssues() => _issues.Count();
 
         public void UpdateMainInfo(Title title, Description description)
         {
@@ -53,7 +53,7 @@ namespace BogdaoTech.Domain.Modules
 
         public UnitResult<Error> AddIssue(Issue issue)
         {
-            //валидация
+            //валидация + логика
             _issues.Add(issue);
 
             return Result.Success<Error>();

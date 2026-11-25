@@ -1,5 +1,6 @@
 ﻿using BogdaoTech.Domain.Modules;
 using BogdaoTech.Domain.Shared;
+using BogdaoTech.Domain.Shared.ValueObjects;
 using CSharpFunctionalExtensions;
 
 public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
@@ -8,24 +9,23 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
 
     private readonly List<Issue> _subIssues = [];
 
-    //Ef core
     private Issue(IssueId id) : base(id)
     {
     }
     
-    private Issue (
+    public Issue (
         IssueId id,
         LessonId lessonId,
         Title title,
         Description description,
         Issue? parentIssue,
-        IssueDetails? details) : base(id)
+        ValueObjectList<IssueFile> files) : base(id)
     {
         LessonId = lessonId;
         Title = title;
         Description = description;
         ParentIssue = parentIssue;
-        Details = details;
+        Files = files;
     }
 
     public void AddSubIssue(Issue issue)
@@ -34,16 +34,7 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
         _subIssues.Add(issue);
     }
 
-    public static Result<Issue> Create(
-        IssueId id,
-        LessonId lessonId,
-        Title title,
-        Description description,
-        Issue? parentIssue,
-        IssueDetails? details)
-    {
-        return new Issue(id, lessonId, title, description, parentIssue, details);
-    }
+    public void UpdateFilesList(ValueObjectList<IssueFile> files) => Files = files;
 
     public void Delete()
     {
@@ -61,15 +52,15 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
         }
     }
 
-    public LessonId LessonId { get; private set; } //Айдишник урока
+    public LessonId LessonId { get; private set; }
 
-    public Title Title { get; private set; } = default!; //Название задачи
+    public Title Title { get; private set; } = default!;
 
-    public Description Description { get; private set; } = default!; //Описание задачи
+    public Description Description { get; private set; } = default!;
 
     public Issue? ParentIssue { get; private set; }
 
-    public IReadOnlyList<Issue> SubIssues => _subIssues; //Подзадачи
+    public IReadOnlyList<Issue> SubIssues => _subIssues;
 
-    public IssueDetails? Details { get; private set; } //У задач есть много файлов
+    public ValueObjectList<IssueFile> Files {get; private set; }
 }
