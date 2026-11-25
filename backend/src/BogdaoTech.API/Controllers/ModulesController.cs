@@ -1,5 +1,6 @@
 using BogdaoTech.API.Contracts;
 using BogdaoTech.API.Extensions;
+using BogdaoTech.API.Processors;
 using BogdaoTech.API.Response;
 using BogdaoTech.Application.Modules.AddIssue;
 using BogdaoTech.Application.Modules.CreateModules;
@@ -83,45 +84,29 @@ namespace BogdaoTech.API.Controllers
         }
 
         [HttpPost("{id:guid}/issue")]
-        public async Task<IActionResult> AddIssue(
+        public async Task<ActionResult> AddIssue(
             [FromRoute] Guid id,
             [FromForm] AddIssueRequest request,
             [FromServices] AddIssueHandler handler,
             CancellationToken cancellationToken
         )
         {
-            List<FileDto> filesDto = [];
-            
-            try
-            {
-                foreach (var file in request.Files)
-                {
-                    var stream = file.OpenReadStream();
-                    filesDto.Add(new FileDto(stream, file.FileName, file.ContentType));
-                }
+            await using var fileProcessor = new FormFileProcessor();
+            var fileDtos = fileProcessor.Process(request.Files);
 
-                var command = new AddIssueCommand(
-                    id,
-                    request.Title,
-                    request.Description,
-                    filesDto
-                );
-                
-                var result = await handler.HandlerAsync(command, cancellationToken);
-                if (result.IsFailure)
-                {
-                    return result.Error.ToResponse();
-                }
-                
-                return Ok(result.Value);
-            }
-            finally
+            var command = new AddIssueCommand(
+                id, 
+                request.Title, 
+                request.Description, 
+                fileDtos);
+
+            var result = await handler.HandlerAsync(command, cancellationToken);
+            if (result.IsFailure)
             {
-                foreach (var fileDto in filesDto)
-                {
-                    await fileDto.Content.DisposeAsync();
-                }
+                return result.Error.ToResponse();
             }
+
+            return Ok(result.Value);
         }
     }
 }

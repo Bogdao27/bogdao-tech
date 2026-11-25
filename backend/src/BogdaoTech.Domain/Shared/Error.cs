@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BogdaoTech.Domain.Shared
+﻿namespace BogdaoTech.Domain.Shared
 {
-    //вспомогательный класс для описания типа ошибки
     public record Error
     {
-        //инкапсулирование создания ошибки
         private Error(string code, string message, ErrorType type)
         {
             Code = code;
@@ -15,7 +9,6 @@ namespace BogdaoTech.Domain.Shared
             Type = type;
         }
 
-        //разделитель
         public const string SEPARATOR = "||";
         public string Code { get; }
         public string Message { get; }
@@ -33,8 +26,6 @@ namespace BogdaoTech.Domain.Shared
         public static Error Conflict(string code, string message) =>
             new Error(code, message, ErrorType.Conflict);
 
-        //хочу сделать сериализацию "value.is.invalid||message not found"
-        //сериализация - это когда из объекта получаем строку
         public string Serialize()
         {
             return string.Join(SEPARATOR, Code, Message, Type);

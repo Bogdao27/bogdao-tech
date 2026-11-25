@@ -1,7 +1,4 @@
-﻿using BogdaoTech.Domain.Shared;
-using CSharpFunctionalExtensions;
-
-public record IssueFile
+﻿public record IssueFile
 {
     public IssueFile(FilePath pathToStorage)
     {

@@ -6,7 +6,7 @@ namespace BogdaoTech.API.Controllers;
 public class FileController : ApplicationController
 {
     private readonly IMinioClient _minioClient;
-    
+
     public FileController(IMinioClient minioClient)
     {
         _minioClient = minioClient;
@@ -15,5 +15,6 @@ public class FileController : ApplicationController
     [HttpPost]
     public async Task<IActionResult> CreateFile(IFormFile file, CancellationToken cancellationToken)
     {
+        
     }
 }

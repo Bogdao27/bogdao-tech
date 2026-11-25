@@ -1,8 +1,8 @@
-﻿using BogdaoTech.Application.Modules.CreateModules;
+﻿using BogdaoTech.Application.Database;
+using BogdaoTech.Application.Modules.CreateModules;
 using BogdaoTech.Application.Modules.UpdateMainInfo;
 using BogdaoTech.Domain.Shared;
 using CSharpFunctionalExtensions;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,27 +10,20 @@ using System.Text;
 
 namespace BogdaoTech.Application.Modules.Delete
 {
-    public record DeleteModuleRequest(Guid ModuleId);
-    
-    public class DeleteModuleRequestValidator : AbstractValidator<DeleteModuleRequest>
-    {
-        public DeleteModuleRequestValidator()
-        {
-            RuleFor(d => d.ModuleId).NotEmpty();
-        }
-    }
-    
     public class DeleteModuleHandler
     {
         private readonly IModulesRepository _modulesRepository;
         private readonly ILogger<DeleteModuleHandler> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
         public DeleteModuleHandler(
             IModulesRepository modulesRepository,
-            ILogger<DeleteModuleHandler> logger)
+            ILogger<DeleteModuleHandler> logger,
+            IUnitOfWork unitOfWork)
         {
             _modulesRepository = modulesRepository;
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<Guid, Error>> HandlerAsync(
@@ -44,11 +37,13 @@ namespace BogdaoTech.Application.Modules.Delete
                 return moduleResult.Error;
             }
 
-            var result = await _modulesRepository.Delete(moduleResult.Value, cancellationToken);
+            moduleResult.Value.Delete();
 
-            _logger.LogInformation("Module deleted with id {moduleId}", request.ModuleId);
+            await _unitOfWork.SaveChanges();
 
-            return result;
+            _logger.LogInformation("Updated deleted with id {moduleId}", request.ModuleId);
+
+            return moduleResult.Value.Id.Value;
         }
     }
 }

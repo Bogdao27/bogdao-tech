@@ -12,8 +12,6 @@ public record FilePath
 
     public static Result<FilePath, Error> Create(Guid path, string extension)
     {
-        // валидация на доступные расширения файлов
-
         var fullPath = path.ToString() + "." + extension;
 
         return new FilePath(fullPath);

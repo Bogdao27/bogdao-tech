@@ -13,7 +13,7 @@ namespace BogdaoTech.Application.Modules
         Task<Result<Module, Error>> GetByTitle(
             Title title, 
             CancellationToken cancellationToken = default);
-        Task<Guid> Save(Module module, CancellationToken cancellationToken = default);
-        Task<Guid> Delete(Module module, CancellationToken cancellationToken = default);
+        Guid Save(Module module, CancellationToken cancellationToken = default);
+        Guid Delete(Module module, CancellationToken cancellationToken = default);
     }
 }

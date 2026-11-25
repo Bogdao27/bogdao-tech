@@ -1,5 +1,6 @@
 ﻿using BogdaoTech.Domain.Modules;
 using BogdaoTech.Domain.Shared;
+using BogdaoTech.Domain.Shared.ValueObjects;
 using CSharpFunctionalExtensions;
 
 public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
@@ -8,7 +9,6 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
 
     private readonly List<Issue> _subIssues = [];
 
-    //Ef core
     private Issue(IssueId id) : base(id)
     {
     }
@@ -19,13 +19,13 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
         Title title,
         Description description,
         Issue? parentIssue,
-        FilesList? details) : base(id)
+        ValueObjectList<IssueFile> files) : base(id)
     {
         LessonId = lessonId;
         Title = title;
         Description = description;
         ParentIssue = parentIssue;
-        Details = details;
+        Files = files;
     }
 
     public void AddSubIssue(Issue issue)
@@ -33,6 +33,8 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
         //logic and validation
         _subIssues.Add(issue);
     }
+
+    public void UpdateFilesList(ValueObjectList<IssueFile> files) => Files = files;
 
     public void Delete()
     {
@@ -50,15 +52,15 @@ public class Issue : BogdaoTech.Domain.Shared.Entity<IssueId>, ISoftDeletable
         }
     }
 
-    public LessonId LessonId { get; private set; } //Айдишник урока
+    public LessonId LessonId { get; private set; }
 
-    public Title Title { get; private set; } = default!; //Название задачи
+    public Title Title { get; private set; } = default!;
 
-    public Description Description { get; private set; } = default!; //Описание задачи
+    public Description Description { get; private set; } = default!;
 
     public Issue? ParentIssue { get; private set; }
 
-    public IReadOnlyList<Issue> SubIssues => _subIssues; //Подзадачи
+    public IReadOnlyList<Issue> SubIssues => _subIssues;
 
-    public FilesList? Details { get; private set; } //У задач есть много файлов
+    public ValueObjectList<IssueFile> Files {get; private set; }
 }

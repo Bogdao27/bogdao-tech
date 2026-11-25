@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BogdaoTech.Domain.Shared
+﻿namespace BogdaoTech.Domain.Shared
 {
     public class Constants
     {
